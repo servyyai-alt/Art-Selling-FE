@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +20,38 @@ export default function Home() {
   useEffect(() => {
     dispatch(fetchProducts({ featured: true, limit: 4 }));
   }, []);
+
+  const [email, setEmail] = useState('');
+  const [loadingSub, setLoadingSub] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const handleSubscribe = async () => {
+    if (!email) {
+      setMessage('Please enter an email address');
+      return;
+    }
+    setLoadingSub(true);
+    setMessage(null);
+    try {
+      const base = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${base}/newsletter/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(data.message || 'Subscribed successfully');
+        setEmail('');
+      } else {
+        setMessage(data.message || 'Subscription failed');
+      }
+    } catch (err) {
+      setMessage('Subscription failed');
+    } finally {
+      setLoadingSub(false);
+    }
+  };
 
   const categories = [
     
@@ -264,10 +296,21 @@ export default function Home() {
             <input
               type="email"
               placeholder="Your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="flex-1 bg-transparent border border-mid-gray text-cream px-5 py-4 font-sans text-sm focus:outline-none focus:border-gold transition-colors placeholder-light-gray"
             />
-            <button className="btn-gold px-8 py-4 whitespace-nowrap">Subscribe</button>
+            <button
+              className="btn-gold px-8 py-4 whitespace-nowrap"
+              onClick={handleSubscribe}
+              disabled={loadingSub}
+            >
+              {loadingSub ? 'Sending...' : 'Subscribe'}
+            </button>
           </div>
+          {message && (
+            <p className="mt-4 text-sm text-cream/80">{message}</p>
+          )}
         </motion.div>
       </section>
     </>
