@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMe } from './redux/authSlice';
 import { fetchCart } from './redux/cartSlice';
+import { fetchWishlist } from './redux/wishlistSlice';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Loader from './components/ui/Loader';
@@ -14,6 +15,7 @@ const Home = lazy(() => import('./pages/Home'));
 const Shop = lazy(() => import('./pages/Shop'));
 const ProductDetail = lazy(() => import('./pages/ProductDetail'));
 const Cart = lazy(() => import('./pages/shop/Cart'));
+const Wishlist = lazy(() => import('./pages/Wishlist'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const OrderSuccess = lazy(() => import('./pages/shop/OrderSuccess'));
 const Login = lazy(() => import('./pages/Login'));
@@ -32,12 +34,13 @@ const ResetPasswordPage = lazy(() => import('./pages/ResetPassword'));
 
 export default function App() {
   const dispatch = useDispatch();
-  const { token, isAuthenticated } = useSelector((s) => s.auth);
+  const { token } = useSelector((s) => s.auth);
 
   useEffect(() => {
     if (token) {
       dispatch(getMe());
       dispatch(fetchCart());
+      dispatch(fetchWishlist());
     }
   }, [token]);
 
@@ -52,6 +55,7 @@ export default function App() {
               <Route path="/shop" element={<Shop />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

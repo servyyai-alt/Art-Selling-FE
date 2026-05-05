@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineShoppingBag, HiOutlineUser, HiOutlineHeart, HiMenu, HiX } from 'react-icons/hi';
 import { logout } from '../../redux/authSlice';
-import ARTTLogo from '../ui/ARTTLogo';
 import ARTLogo from '../../assets/ARTLOGO.jpeg';
 
 export default function Navbar() {
@@ -13,6 +12,7 @@ export default function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { isAuthenticated, user } = useSelector((s) => s.auth);
   const { items } = useSelector((s) => s.cart);
+  const { items: wishlistItems } = useSelector((s) => s.wishlist);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -44,6 +44,7 @@ export default function Navbar() {
   : 'text-gold';
 
   const cartCount = items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const wishlistCount = wishlistItems?.length || 0;
 
   return (
     <header
@@ -79,8 +80,13 @@ export default function Navbar() {
         {/* Icons */}
         <div className="flex items-center gap-5">
           {isAuthenticated && (
-            <Link to="/orders" className="hidden md:block">
+            <Link to="/wishlist" className="relative hidden md:block">
               <HiOutlineHeart className={`w-5 h-5 ${navTextColor} hover:text-gold transition-colors`} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-1 bg-gold text-black text-[10px] font-sans font-medium rounded-full flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
           )}
 
@@ -182,6 +188,7 @@ export default function Navbar() {
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Profile</Link>
+                    <Link to="/wishlist" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Wishlist</Link>
                     <Link to="/orders" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Orders</Link>
                     <button onClick={handleLogout} className="text-left font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Sign Out</button>
                   </>

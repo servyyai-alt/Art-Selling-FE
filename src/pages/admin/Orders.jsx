@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
-  HiOutlineShoppingBag, HiOutlineSearch, HiChevronDown, HiChevronUp, HiCheckCircle,
+  HiOutlineShoppingBag, HiOutlineSearch, HiChevronDown, HiChevronUp, HiCheckCircle, HiArrowLeft
 } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -75,10 +75,17 @@ export default function AdminOrders() {
 
         {/* Header */}
         <div className="py-8">
+          <Link
+            to="/admin"
+            className="flex items-center gap-2 font-sans text-xs tracking-widest uppercase text-light-gray hover:text-black transition-colors mb-6"
+          >
+            <HiArrowLeft className="w-4 h-4" /> Back to Dashboard
+          </Link>
           <p className="font-sans text-xs tracking-widest uppercase text-gold mb-2">Admin Panel</p>
           <h1 className="font-display text-5xl font-light">Orders</h1>
           <div className="w-12 h-px bg-gold mt-4" />
         </div>
+
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
