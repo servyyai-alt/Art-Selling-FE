@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-black font-sans;
+    cursor: auto;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+
+  ::selection {
+    @apply bg-gold text-black;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-beige;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gold rounded-full;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-black text-cream font-sans font-medium tracking-widest text-xs uppercase px-8 py-4
+           transition-all duration-300 hover:bg-gold hover:text-black active:scale-95;
+  }
+
+  .btn-outline {
+    @apply border border-black text-black font-sans font-medium tracking-widest text-xs uppercase px-8 py-4
+           transition-all duration-300 hover:bg-black hover:text-cream active:scale-95;
+  }
+
+  .btn-gold {
+    @apply bg-gold text-black font-sans font-medium tracking-widest text-xs uppercase px-8 py-4
+           transition-all duration-300 hover:bg-gold-dark active:scale-95;
+  }
+
+  .section-title {
+    @apply font-display text-4xl md:text-5xl font-light tracking-wide;
+  }
+
+  .card-hover {
+    @apply transition-all duration-500 hover:shadow-luxury hover:-translate-y-1;
+  }
+
+  .gold-divider {
+    @apply w-16 h-px bg-gold my-4;
+  }
+
+  .input-field {
+    @apply w-full border border-beige bg-transparent px-4 py-3 font-sans text-sm
+           focus:outline-none focus:border-gold transition-colors placeholder-light-gray;
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #E8DDD0 25%, #F8F3ED 50%, #E8DDD0 75%);
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+}
+
+/* Page transition */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms, transform 400ms;
+}
