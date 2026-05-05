@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet-async';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
 import { register, clearError } from '../redux/authSlice';
 import { Input, Button } from '../components/ui/FormElement';
-import ARTLogo from '../assets/ARTLogo.jpeg';
+import ARTLogo from '../assets/ARTLOGO.jpeg';
 
 export default function Register() {
   const dispatch = useDispatch();
