@@ -31,7 +31,6 @@ export default function ProductDetail() {
 
   useEffect(() => {
     dispatch(fetchProduct(id));
-    window.scrollTo(0, 0);
   }, [id]);
 
   const isWishlisted = wishlistItems?.includes(product?._id);

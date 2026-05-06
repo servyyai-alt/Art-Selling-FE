@@ -48,6 +48,33 @@ export const changePassword = createAsyncThunk('auth/changePassword', async (pas
   }
 });
 
+export const addUserAddress = createAsyncThunk('auth/addUserAddress', async (addressData, { rejectWithValue }) => {
+  try {
+    const { data } = await api.post('/users/addresses', addressData);
+    return data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to save address');
+  }
+});
+
+export const deleteUserAddress = createAsyncThunk('auth/deleteUserAddress', async (addressId, { rejectWithValue }) => {
+  try {
+    const { data } = await api.delete(`/users/addresses/${addressId}`);
+    return data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to delete address');
+  }
+});
+
+export const setDefaultAddress = createAsyncThunk('auth/setDefaultAddress', async (addressId, { rejectWithValue }) => {
+  try {
+    const { data } = await api.put(`/users/addresses/${addressId}/default`);
+    return data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to set default address');
+  }
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -95,6 +122,15 @@ const authSlice = createSlice({
         localStorage.removeItem('artt_token');
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+      })
+      .addCase(addUserAddress.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+      })
+      .addCase(deleteUserAddress.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+      })
+      .addCase(setDefaultAddress.fulfilled, (state, action) => {
         state.user = action.payload.user;
       })
       .addCase(changePassword.pending, (state) => {

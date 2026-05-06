@@ -9,6 +9,7 @@ import Footer from './components/layout/Footer';
 import Loader from './components/ui/Loader';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import AdminRoute from './components/layout/AdminRoute';
+import ScrollToTop from './components/layout/ScrollToTop';
 
 // Lazy-loaded pages
 const Home = lazy(() => import('./pages/Home'));
@@ -46,6 +47,7 @@ export default function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen flex flex-col bg-cream">
         <Navbar />
         <main className="flex-1">
