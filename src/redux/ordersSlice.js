@@ -28,6 +28,15 @@ export const fetchOrder = createAsyncThunk('orders/fetchOne', async (id, { rejec
   }
 });
 
+export const requestReturn = createAsyncThunk('orders/requestReturn', async ({ id, reason, details }, { rejectWithValue }) => {
+  try {
+    const { data } = await api.post(`/orders/${id}/return-request`, { reason, details });
+    return data.order;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to submit return request');
+  }
+});
+
 export const createRazorpayOrder = createAsyncThunk('orders/createRazorpayOrder', async (amount, { rejectWithValue }) => {
   try {
     const { data } = await api.post('/payment/create-order', { amount });
@@ -48,7 +57,7 @@ export const verifyPayment = createAsyncThunk('orders/verifyPayment', async (pay
 
 const ordersSlice = createSlice({
   name: 'orders',
-  initialState: { items: [], currentOrder: null, loading: false, error: null },
+  initialState: { items: [], currentOrder: null, loading: false, error: null, returnLoading: false },
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -66,7 +75,17 @@ const ordersSlice = createSlice({
       .addCase(createRazorpayOrder.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
       .addCase(verifyPayment.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(verifyPayment.fulfilled, (state) => { state.loading = false; })
-      .addCase(verifyPayment.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+      .addCase(verifyPayment.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(requestReturn.pending, (state) => { state.returnLoading = true; state.error = null; })
+      .addCase(requestReturn.fulfilled, (state, action) => {
+        state.returnLoading = false;
+        state.currentOrder = action.payload;
+        state.items = state.items.map((order) => order._id === action.payload._id ? action.payload : order);
+      })
+      .addCase(requestReturn.rejected, (state, action) => {
+        state.returnLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 

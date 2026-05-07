@@ -7,6 +7,7 @@ import { HiEye, HiEyeOff } from 'react-icons/hi';
 import { register, clearError } from '../redux/authSlice';
 import { Input, Button } from '../components/ui/FormElement';
 import ARTLogo from '../assets/ARTLOGO.jpeg';
+import RegImg from '../assets/register-img.jpg';
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -45,7 +46,9 @@ export default function Register() {
         {/* Left */}
         <div className="hidden lg:block relative overflow-hidden bg-black">
           <img
+            // src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200"
             src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200"
+            // src={RegImg}
             alt="Art"
             className="w-full h-full object-cover opacity-40"
           />

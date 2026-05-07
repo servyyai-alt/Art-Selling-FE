@@ -10,13 +10,15 @@ import toast from 'react-hot-toast';
 const ProductCard = memo(function ProductCard({ product, index = 0 }) {
   const dispatch = useDispatch();
   const { items: wishlistItems } = useSelector((s) => s.wishlist);
-  const { isAuthenticated } = useSelector((s) => s.auth);
+  const { isAuthenticated, user } = useSelector((s) => s.auth);
+  const isAdmin = user?.role === 'admin';
 
   const isWishlisted = wishlistItems?.includes(product._id);
   const mainImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=600';
 
   const handleWishlist = async (e) => {
     e.preventDefault();
+    if (isAdmin) return;
     if (!isAuthenticated) { toast.error('Sign in to save artworks'); return; }
     await dispatch(toggleWishlist(product._id));
     toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
@@ -24,6 +26,7 @@ const ProductCard = memo(function ProductCard({ product, index = 0 }) {
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
+    if (isAdmin) return;
     if (product.stock === 0) return;
     await dispatch(addToCart({ productId: product._id }));
     toast.success('Added to cart');
@@ -62,25 +65,27 @@ const ProductCard = memo(function ProductCard({ product, index = 0 }) {
           )}
 
           {/* Hover actions */}
-          <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex gap-2 p-3">
-            {!product.isSold && (
+          {!isAdmin && (
+            <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex gap-2 p-3">
+              {!product.isSold && (
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-black text-cream font-sans text-xs tracking-widest uppercase py-3 hover:bg-gold hover:text-black transition-colors"
+                >
+                  Add to Cart
+                </button>
+              )}
               <button
-                onClick={handleAddToCart}
-                className="flex-1 bg-black text-cream font-sans text-xs tracking-widest uppercase py-3 hover:bg-gold hover:text-black transition-colors"
+                onClick={handleWishlist}
+                className="w-12 bg-cream text-black flex items-center justify-center hover:bg-gold transition-colors"
               >
-                Add to Cart
+                {isWishlisted
+                  ? <HiHeart className="w-4 h-4 text-gold" />
+                  : <HiOutlineHeart className="w-4 h-4" />
+                }
               </button>
-            )}
-            <button
-              onClick={handleWishlist}
-              className="w-12 bg-cream text-black flex items-center justify-center hover:bg-gold transition-colors"
-            >
-              {isWishlisted
-                ? <HiHeart className="w-4 h-4 text-gold" />
-                : <HiOutlineHeart className="w-4 h-4" />
-              }
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Info */}

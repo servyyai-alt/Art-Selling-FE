@@ -32,7 +32,14 @@ export const toggleWishlist = createAsyncThunk('wishlist/toggle', async (product
 const wishlistSlice = createSlice({
   name: 'wishlist',
   initialState: { items: [], products: [], loading: false, error: null },
-  reducers: {},
+  reducers: {
+    resetWishlistState: (state) => {
+      state.items = [];
+      state.products = [];
+      state.loading = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchWishlist.pending, (state) => {
@@ -67,4 +74,5 @@ const wishlistSlice = createSlice({
   },
 });
 
+export const { resetWishlistState } = wishlistSlice.actions;
 export default wishlistSlice.reducer;

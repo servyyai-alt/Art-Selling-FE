@@ -49,7 +49,14 @@ export const clearCart = createAsyncThunk('cart/clearCart', async (_, { rejectWi
 const cartSlice = createSlice({
   name: 'cart',
   initialState: { items: [], totalPrice: 0, loading: false, error: null },
-  reducers: {},
+  reducers: {
+    resetCartState: (state) => {
+      state.items = [];
+      state.totalPrice = 0;
+      state.loading = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     const setCart = (state, action) => {
       state.loading = false;
@@ -71,4 +78,5 @@ const cartSlice = createSlice({
   },
 });
 
+export const { resetCartState } = cartSlice.actions;
 export default cartSlice.reducer;

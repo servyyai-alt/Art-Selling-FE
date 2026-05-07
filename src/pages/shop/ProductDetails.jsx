@@ -20,8 +20,9 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const { currentProduct: product, loading } = useSelector((s) => s.products);
   const { items: wishlistItems } = useSelector((s) => s.wishlist);
-  const { isAuthenticated } = useSelector((s) => s.auth);
+  const { isAuthenticated, user } = useSelector((s) => s.auth);
   const { loading: cartLoading } = useSelector((s) => s.cart);
+  const isAdmin = user?.role === 'admin';
 
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
@@ -36,6 +37,7 @@ export default function ProductDetail() {
   const isWishlisted = wishlistItems?.includes(product?._id);
 
   const handleAddToCart = async () => {
+    if (isAdmin) return;
     if (!isAuthenticated) { toast.error('Sign in to add to cart'); navigate('/login'); return; }
     const result = await dispatch(addToCart({ productId: product._id, quantity: qty }));
     if (!result.error) toast.success('Added to cart');
@@ -43,6 +45,7 @@ export default function ProductDetail() {
   };
 
   const handleWishlist = async () => {
+    if (isAdmin) return;
     if (!isAuthenticated) { toast.error('Sign in to save artworks'); return; }
     await dispatch(toggleWishlist(product._id));
     toast.success(isWishlisted ? 'Removed from wishlist' : 'Saved to wishlist');
@@ -225,29 +228,33 @@ export default function ProductDetail() {
               {/* Actions */}
               {!product.isSold && product.stock > 0 && (
                 <div className="flex gap-3 mb-4">
-                  {product.stock > 1 && (
+                  {!isAdmin && product.stock > 1 && (
                     <div className="flex items-center border border-beige">
                       <button onClick={() => setQty(q => Math.max(1, q - 1))} className="px-3 py-3 hover:bg-beige transition-colors text-lg">−</button>
                       <span className="px-4 font-sans text-sm">{qty}</span>
                       <button onClick={() => setQty(q => Math.min(product.stock, q + 1))} className="px-3 py-3 hover:bg-beige transition-colors text-lg">+</button>
                     </div>
                   )}
-                  <Button
-                    onClick={handleAddToCart}
-                    loading={cartLoading}
-                    variant="primary"
-                    size="md"
-                    className="flex-1 flex items-center justify-center gap-2"
-                  >
-                    <HiOutlineShoppingBag className="w-4 h-4" />
-                    Add to Cart
-                  </Button>
-                  <button
-                    onClick={handleWishlist}
-                    className="w-14 border border-beige flex items-center justify-center hover:border-gold transition-colors"
-                  >
-                    {isWishlisted ? <HiHeart className="w-5 h-5 text-gold" /> : <HiOutlineHeart className="w-5 h-5" />}
-                  </button>
+                  {!isAdmin && (
+                    <Button
+                      onClick={handleAddToCart}
+                      loading={cartLoading}
+                      variant="primary"
+                      size="md"
+                      className="flex-1 flex items-center justify-center gap-2"
+                    >
+                      <HiOutlineShoppingBag className="w-4 h-4" />
+                      Add to Cart
+                    </Button>
+                  )}
+                  {!isAdmin && (
+                    <button
+                      onClick={handleWishlist}
+                      className="w-14 border border-beige flex items-center justify-center hover:border-gold transition-colors"
+                    >
+                      {isWishlisted ? <HiHeart className="w-5 h-5 text-gold" /> : <HiOutlineHeart className="w-5 h-5" />}
+                    </button>
+                  )}
                   <button
                     onClick={handleShare}
                     className="w-14 border border-beige flex items-center justify-center hover:border-gold transition-colors"
@@ -281,7 +288,7 @@ export default function ProductDetail() {
         <div className="mt-20 border-t border-beige pt-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="font-display text-3xl font-light">Reviews ({product.numReviews || 0})</h2>
-            {isAuthenticated && !showReviewForm && (
+            {isAuthenticated && !isAdmin && !showReviewForm && (
               <button
                 onClick={() => setShowReviewForm(true)}
                 className="btn-outline"

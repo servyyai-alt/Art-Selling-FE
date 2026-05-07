@@ -16,6 +16,7 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -79,7 +80,7 @@ export default function Navbar() {
 
         {/* Icons */}
         <div className="flex items-center gap-5">
-          {isAuthenticated && (
+          {isAuthenticated && !isAdmin && (
             <Link to="/wishlist" className="relative hidden md:block">
               <HiOutlineHeart className={`w-5 h-5 ${navTextColor} hover:text-gold transition-colors`} />
               {wishlistCount > 0 && (
@@ -90,14 +91,16 @@ export default function Navbar() {
             </Link>
           )}
 
-          <Link to="/cart" className="relative">
-            <HiOutlineShoppingBag className={`w-5 h-5 ${navTextColor} hover:text-gold transition-colors`} />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 w-4 h-4 bg-gold text-black text-xs font-sans font-medium rounded-full flex items-center justify-center">
-                {cartCount}
-              </span>
-            )}
-          </Link>
+          {!isAdmin && (
+            <Link to="/cart" className="relative">
+              <HiOutlineShoppingBag className={`w-5 h-5 ${navTextColor} hover:text-gold transition-colors`} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 w-4 h-4 bg-gold text-black text-xs font-sans font-medium rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          )}
 
           {/* User menu */}
           <div className="relative hidden md:block">
@@ -122,12 +125,18 @@ export default function Navbar() {
                         <p className="font-sans text-xs text-light-gray uppercase tracking-widest">Signed in as</p>
                         <p className="font-sans text-sm truncate">{user?.name}</p>
                       </div>
-                      <Link to="/profile" className="block px-4 py-2 font-sans text-xs tracking-widest uppercase hover:text-gold transition-colors">
-                        Profile
-                      </Link>
-                      <Link to="/orders" className="block px-4 py-2 font-sans text-xs tracking-widest uppercase hover:text-gold transition-colors">
-                        My Orders
-                      </Link>
+                      {/* {!isAdmin && ( */}
+                        
+                          <Link to="/profile" className="block px-4 py-2 font-sans text-xs tracking-widest uppercase hover:text-gold transition-colors">
+                            Profile
+                          </Link>
+                          {!isAdmin && (
+                            <>
+                          <Link to="/orders" className="block px-4 py-2 font-sans text-xs tracking-widest uppercase hover:text-gold transition-colors">
+                            My Orders
+                          </Link>
+                        </>
+                      )}
                       {user?.role === 'admin' && (
                         <Link to="/admin" className="block px-4 py-2 font-sans text-xs tracking-widest uppercase text-gold hover:text-gold-light transition-colors">
                           Admin Panel
@@ -187,9 +196,16 @@ export default function Navbar() {
               <div className="border-t border-mid-gray pt-6 flex flex-col gap-4">
                 {isAuthenticated ? (
                   <>
-                    <Link to="/profile" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Profile</Link>
-                    <Link to="/wishlist" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Wishlist</Link>
-                    <Link to="/orders" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Orders</Link>
+                    {!isAdmin && (
+                      <>
+                        <Link to="/profile" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Profile</Link>
+                        <Link to="/wishlist" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Wishlist</Link>
+                        <Link to="/orders" className="font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Orders</Link>
+                      </>
+                    )}
+                    {isAdmin && (
+                      <Link to="/admin" className="font-sans text-sm tracking-widest uppercase text-gold hover:text-gold-light transition-colors">Admin Panel</Link>
+                    )}
                     <button onClick={handleLogout} className="text-left font-sans text-sm tracking-widest uppercase hover:text-gold transition-colors">Sign Out</button>
                   </>
                 ) : (
